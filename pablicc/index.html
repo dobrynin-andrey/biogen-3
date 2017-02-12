@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Метод Рунге-Кутты 4-го порядка</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/stylename.css">
+</head>
+<body>
+<div class="container">
+    <h1>Вычиcления уравнений методом Рунге-Кутты 4-го порядка</h1>
+    <div class="container-label">
+        <label for="h">Размер шага: </label>
+        <label for="xfinal">Решать с x = [0, xfinal]:</label>
+        <label for="X">Начальное значение X:</label>
+        <label for="Y">Начальное значение Y:</label>
+    </div>
+    <div class="container-input">
+        <input id="h" type="text">
+        <input id="xfinal" type="text">
+        <input id="X" type="text">
+        <input id="Y" type="text">
+    </div>
+    <div class="container-f">
+        <label for="f">Функция:</label>
+        <input id="f" type="text">
+        <span class="batton" id="button" >Рассчитать</span>
+    </div>
+    <div class="container-answer">
+        <label for="answer"><strong>Ответ:</strong></label>
+        <input id="answer" type="text">
+        <span class="batton" id="reload" >Очистить</span>
+    </div>
+
+
+        <div id="grafik" style="width: 700px;">
+        <canvas id="myChart" width="400" height="300"></canvas>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+</body>
+
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="../js/service/Chart.js"></script>
+<script src="js/main.js"></script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function (d, w, c) {
+        (w[c] = w[c] || []).push(function() {
+            try {
+                w.yaCounter42644744 = new Ya.Metrika({
+                    id:42644744,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true,
+                    webvisor:true,
+                    ut:"noindex"
+                });
+            } catch(e) { }
+        });
+
+        var n = d.getElementsByTagName("script")[0],
+                s = d.createElement("script"),
+                f = function () { n.parentNode.insertBefore(s, n); };
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = "https://mc.yandex.ru/metrika/watch.js";
+
+        if (w.opera == "[object Opera]") {
+            d.addEventListener("DOMContentLoaded", f, false);
+        } else { f(); }
+    })(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/42644744?ut=noindex" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+</html>
