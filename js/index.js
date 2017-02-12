@@ -7,4 +7,5 @@ window.jQuery = jQuery;
 import './service/common';
 import './service/Chart';
 import './service/rkm4';
+import './service/biogen';
 
