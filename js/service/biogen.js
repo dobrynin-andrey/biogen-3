@@ -343,6 +343,7 @@ $(document).ready(function () {
 
         var t = 1;
         var tp = 0.5;
+        var f = 1;
 
         var Ia = 1;
         var I = Ia * (1 + Math.cos((2*Math.PI * (t - tp)/f)));
