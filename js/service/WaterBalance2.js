@@ -3,7 +3,173 @@ require("jquery-mousewheel");
 
 $(document).ready(function () {
 
+    /**
+     * Переменные гидробионтов
+     * Ci (i=1-8) - относится к водной среде
+     */
+    var C1 = 1; //Number($('#FH').val());     // (FH) - рыбы;
+    var C2 = 2; //Number($('#ZO').val());     // (ZO) - зоопланктон;
+    var C3 = 3; //Number($('#MF').val());     // (MF) - макрофиты;
+    var C4 = 4; //Number($('#PH').val());     // (PH) - фитопланктон;
+    var C5 = 5; //Number($('#BA').val());     // (BA) - бактерии;
+    var C6 = 6; //Number($('#MP').val());     // (MP) - минеральный фосфор;
+    var C7 = 7; //Number($('#DO').val());     // (DO) - растворимый органический фосфор;
+    var C8 = 8; //Number($('#DE').val());     // (DE) - детритный фосфор;
+    var C9 = 9; //Number($('#IP').val());     // (IP) - интерстициальный фосфор;
 
+    console.log(C1,C2,C3,C4,C5,C6,C7,C8,C9);
+    console.log("------------------------------------");
+
+
+    /*****************************************************
+     *****{ Константы }***********************************
+     *****************************************************/
+
+    /**
+     *  Константа трансформации веществ - Ki
+     *
+     *  Ki = Kio*Rti*Rli
+     *  Kio - оптимальное значение скорости потребления веществ;
+     *  Rti и Rli - коэффициенты коррекции по температуре и освещенности;
+     *
+     *  T - температура воды, Градус Цельсия oC;
+     *  Aik - константы;
+     */
+
+    var J = 0.00001; // Массовый поток на межфазной поверхности
+    var E = 0.00001; // Боковая нагрузка
+    var L = 1; // Длина водохранилища
+
+    var T = 2;
+    var K1o = 1;
+    var K2o = 1;
+    var K3o = 1;
+    var K4o = 1;
+    var K5o = 1;
+    var K6o = 1;
+    var K7o = 1;
+    var K8o = 1;
+
+
+    /* Для корреляции по температуре в выражених для гидробионтов и детрита */
+
+    // Для i = 1;
+    var A10 = 1;
+    var A11 = 1;
+    var A12 = 1;
+    var A13 = 1;
+
+    var Rt1 = A10 + (A11 * Math.exp(A12*T) - 1)/(1 + A13 * Math.exp(A12*T));
+
+    // Для i = 2;
+    var A20 = 1;
+    var A21 = 1;
+    var A22 = 1;
+    var A23 = 1;
+
+    var Rt2 = A20 + (A21 * Math.exp(A22*T) - 1)/(1 + A23 * Math.exp(A22*T));
+
+    // Для i = 3;
+    var A30 = 1;
+    var A31 = 1;
+    var A32 = 1;
+    var A33 = 1;
+
+    var Rt3 = A30 + (A31 * Math.exp(A32*T) - 1)/(1 + A33 * Math.exp(A32*T));
+
+    // Для i = 4;
+    var A40 = 1;
+    var A41 = 1;
+    var A42 = 1;
+    var A43 = 1;
+
+    var Rt4 = A40 + (A41 * Math.exp(A42*T) - 1)/(1 + A43 * Math.exp(A42*T));
+
+    // Для i = 5;
+    var A50 = 1;
+    var A51 = 1;
+    var A52 = 1;
+    var A53 = 1;
+
+    var Rt5 = A50 + (A51 * Math.exp(A52*T) - 1)/(1 + A53 * Math.exp(A52*T));
+
+
+    // Для i = 8;
+    var A80 = 1;
+    var A81 = 1;
+    var A82 = 1;
+    var A83 = 1;
+
+    var Rt8 = A80 + (A81 * Math.exp(A82*T) - 1)/(1 + A83 * Math.exp(A82*T));
+
+    /* Корреляция по освещенности имеет вид (для i = 3; 4) */
+    /**
+     *  t - время суток;
+     *  Ia - среднесуточная освещенность;
+     *  f - фотопериод;
+     *  tp - 12 часов или 0,5 сут.
+     *  Ioi = 350 кал/(м2 * сут.) для i=4; 3. Для i=3 свое значение.
+     *  Kai, Kbi и hoi - внутренние параметры модели;
+     *  Для i!=4 и i!=3, Rli = 1;
+     */
+
+    var Rl1 = 1;
+    var Rl2 = 1;
+    var Rl5 = 1;
+    var Rl6 = 1;
+    var Rl7 = 1;
+    var Rl8 = 1;
+
+    var t = 1;
+    var tp = 0.5;
+    var f = 1;
+
+    var I04 = 350; // кал/(см2*сутки) - для i = 4
+    var I03 = 250; // кал/(см2*сутки) - для i = 3 - свое значение!
+
+    var Ia = 1;
+    var I = Ia * (1 + Math.cos((2*Math.PI * (t - tp)/f)));
+
+
+    /* rei = I/I0i; */
+    var re3 = I/I03;
+    var re4 = I/I04;
+
+    var Ka3 = 1;
+    var Ka4 = 1;
+    var Kb3 = 1;
+    var Kb4 = 1;
+    var h03 = 1;
+    var h04 = 1;
+    var Ke3 = Ka3 + Kb3*C3;
+    var Ke4 = Ka4 + Kb4*C4;
+    var rx3 = re3*(Math.exp(-Ke3*h03));
+    var rx4 = re4*(Math.exp(-Ke4*h04));
+
+
+    var Rl3 = (Math.exp(1))/(Ke3*h03)+(Math.exp(-rx3)-Math.exp(-re3));
+    var Rl4 = (Math.exp(1))/(Ke4*h04)+(Math.exp(-rx4)-Math.exp(-re4));
+
+
+
+    /* Находим Ki */
+
+    var k1 = K1o*Rt1*Rl1;
+    var k2 = K2o*Rt2*Rl2;
+    var k3 = K3o*Rt3*Rl3;
+    var k4 = K4o*Rt4*Rl4;
+    var k5 = K5o*Rt5*Rl5;
+    var k8 = K8o*Rt8*Rl8;
+
+
+    /*****************************************************
+     *****{ Константы END }*******************************
+     *****************************************************/
+
+
+
+
+var rationC1 = {
 
     /**
      * i=1: Для рыбы elements
@@ -18,128 +184,205 @@ $(document).ready(function () {
     /**
      * Коэффициенты потребления
      */
-    var d11 = 1;
-    var d12 = 1;
-    var d13 = 1;
-    var d14 = 1;
-    var d15 = 1;
-    var d16 = 1;
-    var d17 = 1;
-    var d18 = 1;
+    coofPotreb: {
+        d11: 1,
+        d12: 1,
+        d13: 1,
+        d14: 1,
+        d15: 1,
+        d16: 1,
+        d17: 1,
+        d18: 1
+    },
+    F1: function () {
+        var F1_ = this.coofPotreb.d12*C2 + this.coofPotreb.d13*C3 + this.coofPotreb.d14*C4 + this.coofPotreb.d18*C8;
+        return F1_;
+    },
 
     //var k1 = 1;
 
-    var F1 = d12*C2 + d13*C3 + d14*C4 + d18*C8;
-
     /* Удельная скорость потребления */
-    var U12 = (k1*d12*C2)/(F1 + C1);
-    var U13 = (k1*d13*C3)/(F1 + C1);
-    var U14 = (k1*d14*C4)/(F1 + C1);
-    var U18 = (k1*d18*C8)/(F1 + C1);
+    U12: function (c1) {
+       var U12_ =(k1*this.coofPotreb.d12*C2)/(this.F1() + c1);
+        return U12_;
+    },
+    U13: function (c1) {
+        var U13_ = (k1*this.coofPotreb.d13*C3)/(this.F1() + c1);
+        return U13_;
+    },
+    U14: function (c1) {
+        var U14_ = (k1*this.coofPotreb.d14*C4)/(this.F1() + c1);
+        return U14_;
+    },
+    U18: function (c1) {
+        var U18_ = (k1*this.coofPotreb.d18*C4)/(this.F1() + c1);
+        return U18_;
+    },
 
-    var U1 = U12 + U13 + U14 + U18;
+   U1: function (c1) {
+       var U1_ = this.U12(c1) + this.U13(c1) + this.U14(c1) + this.U18(c1);
+       return U1_;
+   },
     /* Скорость выделения */
-    var R1 = (d11*U1)/(1 + d12*U1) + (1 - d11/d12);
-    var L1 = R1*U1;
+   r1: function (c1) {
+        var r1_ = (this.coofPotreb.d11*this.U1(c1))/(1 + this.coofPotreb.d12*this.U1(c1)) + (1 - this.coofPotreb.d11/this.coofPotreb.d12);
+       return r1_;
+   },
+    L1: function (c1) {
+        var L1_ = this.r1(c1)*this.U1(c1);
+        return L1_;
+    },
 
     /* Скорость смертности */
-    var V11 = 1;
-    var V12 = 1;
-    var S1 = V11 + V12*(C1/U1);
+    V11: 1,
+    V12: 1,
+    S1: function (c1) {
+        var S1_ = this.V11 + this.V12*(c1/this.U1(c1));
+        return S1_;
+    },
 
     /* Скорость выедания */
-    var Ct1 = 0; // В дальнейшем, когда будет учтен вылов рыбы человеком - бедет Ct1 != 0.
+    Ct1: 0, // В дальнейшем, когда будет учтен вылов рыбы человеком - бедет Ct1 != 0.
 
-    console.log("------------------------------------");
-    console.log("F1: "+F1);
-    console.log("U12: "+U12);
-    console.log("U13: "+U13);
-    console.log("U14: "+U14);
-    console.log("U18: "+U18);
-    console.log("U1: "+U1);
-    console.log("L1: "+L1);
-    console.log("S1: "+S1);
-    console.log("Ct1: "+Ct1);
-
+    R1: function (c1) {
+        var R1_ = (this.U1(c1) - this.L1(c1) - this.S1(c1) - this.Ct1) * c1;
+        return R1_;
+    }
     /**
      *  Конец i=1: Для рыбы elements.
      */
 
-
+    };
      /******************************************************
       *****{ Уравнение водного баланса }*******************
       ******************************************************/
+    var Q_plus = [10689, 8863, 8577, 9087, 8997, 8712, 8257, 8211, 6700, 6600, 6500,10414]; // Приток воды
+    var Q_minus = [8577,8863, 8577, 9087, 8997, 8712, 8257, 8177, 8237, 8077, 8077, 7987]; // Убыль воды
+    var Q_plus__minus = []; // Разность притока и убыли
+    if (Q_plus.length == Q_minus.length) {
+        for (var q = 0; q < Q_plus.length; q++) {
+            Q_plus__minus[q] = Q_plus[q] - Q_minus[q];
 
+        }
+    } else {
+        console.log("Ошибка: массивы притока и убыли не равны!");
+    }
+    console.log(Q_plus__minus);
     var Q_ = [2112, 0, 0, 0, 0, 0, 0, 34, -1537, -1477, -1577, 2427];
-    var W_ = 14028000;
+    var W_ = 14028000; // Начальный объем водохранилища
+
 
 /***--------------------------------------------------------------------------------***/
     /**
      *  Объем
      */
-    var V = [0, 12280000, 13453000, 14028000, 14427000, 15600000];
+    var V = [0, 12280000, 13453000, 14028000, 14427000, 15600000]; // Начальный значения для "справочника" Оъема
     /**
      *  Глубина
      */
-    var H = [0, 3.0, 3.3, 3.4, 3.6, 3.8];
-    var H_t = [];
-
-    var V_t_1 = 15.6;  //$('#h').val();
-
-
-
-
-
+    var H = [0, 3.0, 3.3, 3.4, 3.6, 3.8]; // Начальный значения для "справочника" Глубины
+ 
 /***--------------------------------------------------------------------------------***/
-    var Y = W_;
+    var Y = W_; // Текущий объем
     var h = 1/4; // Каждые 6 часов
-    var xfinal = 364; // 1 год
+    var xfinal = 5; //364; // 1 год
     var kv = xfinal/12*4; // Значение для определения месяца из 1456
 
-    var I = [0]; // Массив 1456
+    var Idex = [0]; // Массив 1456
     var n = 0; // Счетчик для месяца
-    var Yframe = [Y/1000000];
-    var X = [];
-    var S = [];
-    // Цикл метода РК4
-    for (var i=1; i<(xfinal/h); i++) {
+    var Yframe = [Y/1000000]; // Массив Объема в млн. м3
+    var X = []; // Массив Глубины
+    var S = []; // Массив Площади
+    var Fun;
 
-        I.push(i);
+    /* Скорость биохимической трансформации */
+
+
+
+    function functionC1 (w,q_plus, q_minus, c, s) {
+        Fun = w*rationC1.R1(C1) + q_plus*C1 - q_minus*c + J*s + E*L;
+        //console.log(Fun);
+        return Fun;
+    }
+
+    functionC1(500, Q_plus[0], Q_minus[0], C1, 100);
+
+   /* console.log(rationC1.F1());
+    console.log(rationC1.U12(C1));
+    console.log(rationC1.U13(C1));
+    console.log(rationC1.U14(C1));
+    console.log(rationC1.U18(C1));
+    console.log('U1: '+rationC1.U1(C1));
+    console.log(rationC1.r1(C1));
+    console.log(rationC1.L1(C1));
+    console.log(rationC1.S1(C1));
+    console.log(rationC1);*/
+
+    var arrCiW =[]; // Массив значений полученных в рузультате уравнения для гидрохимических переменных
+    var CiW = 0;
+
+    for (var i=1; i<(xfinal/h); i++) {
+        Idex.push(i); // Помещается в массив 364х4
         if (i > kv) {
             n++;
             kv = kv + xfinal/12*4;
         }
-
-        for (var p = 0; p < V.length; p++) {
+        for (var p = 0; p < V.length; p++) { // Цикл по значениям объема
             if (Y >= V[p] && Y <= V[p+1]) {
-               /* var tg = (H[p+1] - H[p])/(V[p+1] - V[p]);
-                var H_t_1 = H[p] + (V[p+1] - V[p]) * tg;
-
-                console.log(tg);
-                console.log("H_t_1 " + H_t_1);
-                var S_t_1 = V[p+1]/H_t_1;
-                console.log("S_t_1 " + S_t_1);
-*/
-
-
-                var x = H[p] + ((Y - V[p]) * (H[p+1]-H[p])) / (V[p+1]-V[p]);
-                X.push(x);
-                var s = Y/x;
-                S.push(s/1000000);
-                // if (Y == 14028000) {
-                //     console.log(s);
-                // }
-
+                var x = H[p] + ((Y - V[p]) * (H[p+1]-H[p])) / (V[p+1]-V[p]); // Вычисление глубины методом пропорции
+                X.push(x); // Помещается в массив Глубины
+                var s = Y/x;  // Вычисление площади водоема
+                S.push(s/1000000); // Помещается в массив Площади в млн. м2
             }
         }
+        Y = Y + Q_[n]*6; // Увеличение / уменьшение объема каждые 6 часов в зависииости от Q_
+        Yframe.push(Y/1000000); // Помещение в массив Объема в млн. м3
+
+        /**
+         * РКМ4  function functionC1 (w,q_plus, q_minus, c, s)
+         */
 
 
-        Y = Y + Q_[n]*6;
-        Yframe.push(Y/1000000);
+        var kk1 = functionC1 (Y            , Q_plus[n]        , Q_minus[n]        , C1            , S[i]        );
+        //console.log(kk1);
+        console.log(Y);
+        console.log(Q_plus[n]);
+        console.log(Q_minus[n]);
+        console.log(C1);
+        console.log(S[i]);
+        console.log(S);
+        var kk2 = functionC1 (Y + 0.5*kk1*h, Q_plus[n] + 0.5*h, Q_minus[n] + 0.5*h, C1 + 0.5*kk1*h, S[i] + 0.5*h);
+       // console.log(kk2);
+        var kk3 = functionC1 (Y + 0.5*kk2*h, Q_plus[n] + 0.5*h, Q_minus[n] + 0.5*h, C1 + 0.5*kk2*h, S[i] + 0.5*h);
+       // console.log(kk3);
+        var kk4 = functionC1 (Y +     kk3*h, Q_plus[n] +     h, Q_minus[n] +     h, C1 +     kk3*h, S[i] +     h);
+       // console.log(kk4);
+
+        CiW = CiW + h/6*(kk1 + 2*kk2 + 2*kk3 + kk4);
+        // Поместим y в массив
+        arrCiW.push(CiW);
+
+        // Поместим x в массив
+        //Xframe.push(X);
+        // Обновим x
+        //X = X + h;
+        // console.log(X);
+
+        /**
+         * РКМ4 end
+         */
+
+
+
+
 
     }
+    console.log(arrCiW);
+    /***--------------------------------------------------------------------------------***/
 
-    //console.log(S);
+    /******************************************************
+    *****{ Графики }***************************************
+    ******************************************************/
     var data = {
         labels: V,
         datasets: [
@@ -199,7 +442,7 @@ $(document).ready(function () {
     });
 
     var data2 = {
-        labels: I,
+        labels: Idex,
         datasets: [
             {
                 label: "Объем, млн м3",
@@ -260,7 +503,7 @@ $(document).ready(function () {
 
 
     var data3 = {
-        labels: I,
+        labels: Idex,
         datasets: [
             {
                 label: "Глубина, м",
@@ -319,7 +562,7 @@ $(document).ready(function () {
     });
 
     var data4 = {
-        labels: I,
+        labels: Idex,
         datasets: [
             {
                 label: "Площадь, млн м2",
@@ -383,7 +626,7 @@ $(document).ready(function () {
     var allCharts = new Chart(ctx5, {
         type: 'line',
         data: {
-            labels: I,
+            labels: Idex,
             datasets: [{
                 label: "Глубина, м",
                 backgroundColor: 'red',
@@ -421,13 +664,6 @@ $(document).ready(function () {
                         display: true,
                         labelString: 'Год, 6 часов',
                         position: 'right'
-                    }
-                }],
-                yAxes: [{
-                    display: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Площадь, млн м2'
                     }
                 }]
             },
