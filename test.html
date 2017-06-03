@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Водный баланс</title>
+    <link rel="stylesheet" href="public/css/style.css">
+    <!--<link rel="stylesheet" href="css/stylename.css">-->
+</head>
+<body>
+<div class="container">
+
+    <form name="auth" id="auth" method="post" action="'
+			+oCommon.getSetting('oSettingsUsers', 'features.authentication.openid.provider') + '?cmd=auth'+'"> \
+        <input type="hidden" name="openid.return_to" value="'+getRedirect()+'"/> \
+        <input type="hidden" name="openid.auth.check" value="true"/> \
+        <input type="hidden" name="openid.auth.user" value="'+$.trim($('#inputLogin').val())+'"/> \
+        <input type="hidden" name="openid.auth.pwd" value="'+$.trim($('#inputPassword').val())+'"/> \
+        <input type="hidden" name="opeind.auth.short" value="'+String($("#inputShortSession").is(':checked'))+'"/> \
+    </form>
+
+    <div id="openIDFrame"></div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+</body>
+
+<!--<script src="js/jquery-3.1.1.min.js"></script>-->
+<!--<script src="../js/service/Chart.js"></script>-->
+<script src="public/js/bundle.js"></script>
+
+<script>
+    $('#openIDFrame').oAPI.openID.authentication;
+</script>
+
+<!-- Yandex.Metrika counter --
+<script type="text/javascript">
+    (function (d, w, c) {
+        (w[c] = w[c] || []).push(function() {
+            try {
+                w.yaCounter42644744 = new Ya.Metrika({
+                    id:42644744,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true,
+                    webvisor:true,
+                    ut:"noindex"
+                });
+            } catch(e) { }
+        });
+
+        var n = d.getElementsByTagName("script")[0],
+                s = d.createElement("script"),
+                f = function () { n.parentNode.insertBefore(s, n); };
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = "https://mc.yandex.ru/metrika/watch.js";
+
+        if (w.opera == "[object Opera]") {
+            d.addEventListener("DOMContentLoaded", f, false);
+        } else { f(); }
+    })(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/42644744?ut=noindex" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+</html>
