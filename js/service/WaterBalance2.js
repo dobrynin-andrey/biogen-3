@@ -7,7 +7,7 @@ $(document).ready(function () {
      * Переменные гидробионтов
      * Ci (i=1-8) - относится к водной среде
      */
-    var C1 = 1; //Number($('#FH').val());     // (FH) - рыбы;
+    var C1 = 863550; //Number($('#FH').val());     // (FH) - рыбы;
     var C2 = 2; //Number($('#ZO').val());     // (ZO) - зоопланктон;
     var C3 = 3; //Number($('#MF').val());     // (MF) - макрофиты;
     var C4 = 4; //Number($('#PH').val());     // (PH) - фитопланктон;
@@ -51,7 +51,7 @@ $(document).ready(function () {
     var K8o = 1;
 
 
-    /* Для корреляции по температуре в выражених для гидробионтов и детрита */
+    /* Для корреляции по температуре в выражениях для гидробионтов и детрита */
 
     // Для i = 1;
     var A10 = 1;
@@ -172,14 +172,13 @@ $(document).ready(function () {
 var rationC1 = {
 
     /**
-     * i=1: Для рыбы elements
+     * i=1: Для рыбы FH
      * Рацион:
      * Фитопланктон: C4 (PH);
      * Зоопланктон: C2 (ZO);
      * Детрит: C8 (DE);
      * Макрофиты: C3 (MF);
      */
-
 
     /**
      * Коэффициенты потребления
@@ -194,12 +193,11 @@ var rationC1 = {
         d17: 1,
         d18: 1
     },
+    /* Рацион */
     F1: function () {
         var F1_ = this.coofPotreb.d12*C2 + this.coofPotreb.d13*C3 + this.coofPotreb.d14*C4 + this.coofPotreb.d18*C8;
         return F1_;
     },
-
-    //var k1 = 1;
 
     /* Удельная скорость потребления */
     U12: function (c1) {
@@ -242,19 +240,20 @@ var rationC1 = {
     },
 
     /* Скорость выедания */
-    Ct1: 0, // В дальнейшем, когда будет учтен вылов рыбы человеком - бедет Ct1 != 0.
+    Ct1: 0, // В дальнейшем, когда будет учтен вылов рыбы человеком - будет Ct1 != 0.
 
+    /* Скорость биохимической трансформации */
     R1: function (c1) {
         var R1_ = (this.U1(c1) - this.L1(c1) - this.S1(c1) - this.Ct1) * c1;
         return R1_;
     }
     /**
-     *  Конец i=1: Для рыбы elements.
+     *  Конец i=1: Для рыбы FH.
      */
 
     };
      /******************************************************
-      *****{ Уравнение водного баланса }*******************
+      *****{ Уравнение водного баланса }********************
       ******************************************************/
     var Q_plus = [10689, 8863, 8577, 9087, 8997, 8712, 8257, 8211, 6700, 6600, 6500,10414]; // Приток воды
     var Q_minus = [8577,8863, 8577, 9087, 8997, 8712, 8257, 8177, 8237, 8077, 8077, 7987]; // Убыль воды
@@ -262,12 +261,10 @@ var rationC1 = {
     if (Q_plus.length == Q_minus.length) {
         for (var q = 0; q < Q_plus.length; q++) {
             Q_plus__minus[q] = Q_plus[q] - Q_minus[q];
-
         }
     } else {
         console.log("Ошибка: массивы притока и убыли не равны!");
     }
-    console.log(Q_plus__minus);
     var Q_ = [2112, 0, 0, 0, 0, 0, 0, 34, -1537, -1477, -1577, 2427];
     var W_ = 14028000; // Начальный объем водохранилища
 
@@ -281,11 +278,10 @@ var rationC1 = {
      *  Глубина
      */
     var H = [0, 3.0, 3.3, 3.4, 3.6, 3.8]; // Начальный значения для "справочника" Глубины
- 
 /***--------------------------------------------------------------------------------***/
     var Y = W_; // Текущий объем
     var h = 1/4; // Каждые 6 часов
-    var xfinal = 5; //364; // 1 год
+    var xfinal = 364; // 1 год
     var kv = xfinal/12*4; // Значение для определения месяца из 1456
 
     var Idex = [0]; // Массив 1456
@@ -295,30 +291,18 @@ var rationC1 = {
     var S = []; // Массив Площади
     var Fun;
 
-    /* Скорость биохимической трансформации */
-
-
-
+ /******************************************************
+  *****{ Уравнение для гидрохимических переменных }*****
+  ******************************************************/
     function functionC1 (w,q_plus, q_minus, c, s) {
         Fun = w*rationC1.R1(C1) + q_plus*C1 - q_minus*c + J*s + E*L;
-        //console.log(Fun);
         return Fun;
     }
+/******************************************************
+ ******************************************************
+ ******************************************************/
 
-    functionC1(500, Q_plus[0], Q_minus[0], C1, 100);
-
-   /* console.log(rationC1.F1());
-    console.log(rationC1.U12(C1));
-    console.log(rationC1.U13(C1));
-    console.log(rationC1.U14(C1));
-    console.log(rationC1.U18(C1));
-    console.log('U1: '+rationC1.U1(C1));
-    console.log(rationC1.r1(C1));
-    console.log(rationC1.L1(C1));
-    console.log(rationC1.S1(C1));
-    console.log(rationC1);*/
-
-    var arrCiW =[]; // Массив значений полученных в рузультате уравнения для гидрохимических переменных
+    var arrCiW =[]; // Массив значений полученных в результате уравнения для гидрохимических переменных
     var CiW = 0;
 
     for (var i=1; i<(xfinal/h); i++) {
@@ -335,49 +319,24 @@ var rationC1 = {
                 S.push(s/1000000); // Помещается в массив Площади в млн. м2
             }
         }
-        Y = Y + Q_[n]*6; // Увеличение / уменьшение объема каждые 6 часов в зависииости от Q_
+        Y = Y + Q_[n]*6; // Увеличение / уменьшение объема каждые 6 часов в зависимости от Q_
         Yframe.push(Y/1000000); // Помещение в массив Объема в млн. м3
 
         /**
          * РКМ4  function functionC1 (w,q_plus, q_minus, c, s)
          */
 
-
-        var kk1 = functionC1 (Y            , Q_plus[n]        , Q_minus[n]        , C1            , S[i]        );
-        //console.log(kk1);
-        console.log(Y);
-        console.log(Q_plus[n]);
-        console.log(Q_minus[n]);
-        console.log(C1);
-        console.log(S[i]);
-        console.log(S);
-        var kk2 = functionC1 (Y + 0.5*kk1*h, Q_plus[n] + 0.5*h, Q_minus[n] + 0.5*h, C1 + 0.5*kk1*h, S[i] + 0.5*h);
-       // console.log(kk2);
-        var kk3 = functionC1 (Y + 0.5*kk2*h, Q_plus[n] + 0.5*h, Q_minus[n] + 0.5*h, C1 + 0.5*kk2*h, S[i] + 0.5*h);
-       // console.log(kk3);
-        var kk4 = functionC1 (Y +     kk3*h, Q_plus[n] +     h, Q_minus[n] +     h, C1 +     kk3*h, S[i] +     h);
-       // console.log(kk4);
-
+        var kk1 = functionC1 (Y            , Q_plus[n], Q_minus[n], C1            , S[i]);
+        var kk2 = functionC1 (Y + 0.5*kk1*h, Q_plus[n], Q_minus[n], C1 + 0.5*kk1*h, S[i]);
+        var kk3 = functionC1 (Y + 0.5*kk2*h, Q_plus[n], Q_minus[n], C1 + 0.5*kk2*h, S[i]);
+        var kk4 = functionC1 (Y +     kk3*h, Q_plus[n], Q_minus[n], C1 +     kk3*h, S[i]);
         CiW = CiW + h/6*(kk1 + 2*kk2 + 2*kk3 + kk4);
-        // Поместим y в массив
-        arrCiW.push(CiW);
-
-        // Поместим x в массив
-        //Xframe.push(X);
-        // Обновим x
-        //X = X + h;
-        // console.log(X);
-
-        /**
+        arrCiW.push(CiW/1000000); // Поместим y в массив
+          /**
          * РКМ4 end
          */
-
-
-
-
-
     }
-    console.log(arrCiW);
+
     /***--------------------------------------------------------------------------------***/
 
     /******************************************************
@@ -621,9 +580,9 @@ var rationC1 = {
         }
     });
 
-    var ctx5 = $("#allCharts");
+    var allctx = $("#allCharts");
 
-    var allCharts = new Chart(ctx5, {
+    var allCharts = new Chart(allctx, {
         type: 'line',
         data: {
             labels: Idex,
@@ -675,7 +634,65 @@ var rationC1 = {
         }
     });
 
+    var data5 = {
+        labels: Idex,
+        datasets: [
+            {
+                label: "Площадь, млн м2",
+                fill: false,
+                lineTension: 0.1,
+                backgroundColor: "rgba(50, 49, 96, 0.57)",
+                borderColor: "rgb(50, 49, 96)",
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgb(50, 49, 96)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgb(50, 49, 96)",
+                pointHoverBorderColor: "rgba(50, 49, 96, 0.57)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: arrCiW,
+                spanGaps: false
+            }
+        ]
+    };
 
+
+    var ctx5 = $("#myChart5");
+
+    var myChart5 = new Chart(ctx5, {
+        type: 'line',
+        data: data5,
+        options: {
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Год, 6 часов',
+                        position: 'right'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: ''
+                    }
+                }]
+            },
+            title: {
+                display: true,
+                text: 'Значения уравнения гидрохимических переменных',
+                position: 'top'
+            }
+        }
+    });
 
 
 
