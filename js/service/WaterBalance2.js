@@ -252,7 +252,180 @@ var rationC1 = {
      */
 
     };
-     /******************************************************
+
+
+    /* ------------------------------------------------------------------ */
+
+
+var rationC2 = {
+    /**
+     * i=2: Для зоопланктона C2 = ZO
+     * Рацион:
+     * Фитопланктон: C4 (PH);
+     * Бактерии: С5 (BA);
+     * Детрит: C8 (DE);
+     */
+
+    /**
+     * Коэффициенты потребления
+     */
+    coofPotreb : {
+        d21 : 1,
+        d22 : 1,
+        d23 : 1,
+        d24 : 1,
+        d25 : 1,
+        d26 : 1,
+        d27 : 1,
+        d28 : 1
+    },
+    //var k2 = 1;
+    F2: function () {
+      var F2_ =  this.coofPotreb.d24*C4 + this.coofPotreb.d25*C5 + this.coofPotreb.d28*C8;
+        return F2_;
+    },
+    /* Удельная скорость потребления */
+    U24: function () {
+        var U24_ = (k2*this.coofPotreb.d24*C4)/(this.F2() + C2);
+        return U24_;
+    },
+    U25: function () {
+        var U25_ = (k2*this.coofPotreb.d25*C5)/(this.F2() + C2);
+        return U25_;
+    },
+    U28: function () {
+        var U28_ = (k2*this.coofPotreb.d28*C8)/(this.F2() + C2);
+        return U28_;
+    },
+    U2: function () {
+        var U2_ = this.U24() + this.U25() + this.U28();
+        return U2_;
+    },
+
+    /* Скорость выделения */
+    r2: function () {
+        var r2_ = (this.coofPotreb.d21*this.U2())/(1 + this.coofPotreb.d22*this.U2()) + (1 - this.coofPotreb.d21/this.coofPotreb.d22);
+        return r2_;
+    },
+    L2: function () {
+        var L2_ = this.r2()*this.U2();
+        return L2_;
+    },
+    /* Скорость смертности */
+    V21: 1,
+    V22: 1,
+    S2: function () {
+        var S2_ = this.V21 + this.V22*(C2/this.U2());
+        return S2_;
+    },
+    /* Скорость выедания */
+    Ct2: rationC1.U12(C1) // Выедания зоопланктона рыбой
+
+};
+
+    console.log("------------------------------------");
+    console.log("F2: "+rationC2.F2());
+    console.log("U24: "+rationC2.U24());
+    console.log("U25: "+rationC2.U25());
+    console.log("U28: "+rationC2.U28());
+    console.log("U2: "+rationC2.U2());
+    console.log("L2: "+rationC2.L2());
+    console.log("S2: "+rationC2.S2());
+    console.log("Ct2: "+rationC2.Ct2);
+
+    /**
+     *  Конец i=2: Для зоопланктона C2.
+     */
+
+    /* ------------------------------------------------------------------ */
+
+var rationC3 = {
+
+    /**
+     * i=3: Для макрофитов C3 = MF
+     * Рацион:
+     * Минеральный фосфор: C6 (MP);
+     * Интерстициальный фосфор: С9 (IP);
+     */
+
+    /**
+     * Коэффициенты потребления
+     */
+    coofPotreb : {
+        d31: 1,
+        d32: 1,
+        d33: 1,
+        d34: 1,
+        d35: 1,
+        d36: 1,
+        d37: 1,
+        d38: 1,
+        d39: 1
+    },
+
+    //var k3 = 1;
+
+    F3: function () {
+        var F3_ = this.coofPotreb.d36*C6 + this.coofPotreb.d39*C9;
+        return F3_;
+    },
+
+    /* Удельная скорость потребления */
+    U36: function () {
+        var U36_ = (k3*this.coofPotreb.d36*C6)/(this.F3() + C3);
+        return U36_;
+    },
+    U39: function () {
+        var U39_ = (k3*this.coofPotreb.d39*C9)/(this.F3() + C3);
+        return U39_;
+    },
+    U3: function () {
+        var U3_ = this.U36() + this.U39();
+        return U3_;
+    },
+    /* Скорость выделения */
+    r3: function () {
+        var r3_ = (this.coofPotreb.d31*this.U3())/(1 + this.coofPotreb.d32*this.U3()) + (1 - this.coofPotreb.d31/this.coofPotreb.d32);
+        return r3_;
+    },
+    L3: function () {
+        var L3_ = this.r3()*this.U3();
+        return L3_;
+    },
+
+    /* Скорость смертности */
+    V31: 1,
+    V32: 1,
+    S3: function () {
+        var S3_ = this.V31 + this.V32*(C3/this.U3());
+        return S3_;
+    },
+
+    /* Скорость выедания */
+    Ct3: rationC1.U13(C1) // Выедания макрофитов рыбой
+    
+};
+    
+    console.log("------------------------------------");
+    console.log("F3: "+rationC3.F3());
+    console.log("U36: "+rationC3.U36());
+    console.log("U39: "+rationC3.U39());
+    console.log("U3: "+rationC3.U3());
+    console.log("L3: "+rationC3.L3());
+    console.log("S3: "+rationC3.S3());
+    console.log("Ct3: "+rationC3.Ct3);
+
+    /**
+     *  Конец i=3: Для макрофитов C3.
+     */
+
+    /* ------------------------------------------------------------------ */
+
+
+
+
+
+    /******************************************************
       *****{ Уравнение водного баланса }********************
       ******************************************************/
     var Q_plus = [10689, 8863, 8577, 9087, 8997, 8712, 8257, 8211, 6700, 6600, 6500,10414]; // Приток воды
@@ -628,7 +801,7 @@ var rationC1 = {
             },
             title: {
                 display: true,
-                text: 'Общай график',
+                text: 'Общий график',
                 position: 'top'
             }
         }
@@ -638,7 +811,7 @@ var rationC1 = {
         labels: Idex,
         datasets: [
             {
-                label: "Площадь, млн м2",
+                label: "С1",
                 fill: false,
                 lineTension: 0.1,
                 backgroundColor: "rgba(50, 49, 96, 0.57)",

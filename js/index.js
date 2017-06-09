@@ -9,5 +9,4 @@ import './service/Chart';
 import './service/rkm4';
 import './service/biogen';
 import './service/WaterBalance2';
-import './service/ws';
 
