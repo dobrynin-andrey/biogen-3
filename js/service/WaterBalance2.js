@@ -420,6 +420,78 @@ var rationC3 = {
      */
 
     /* ------------------------------------------------------------------ */
+var rationC4 = {
+
+    /**
+     * i=4: Для фитопланктона C4. (PH) - фитопланктон;
+     * Рацион:
+     * Минеральный фосфор: C6 (MP);
+     */
+
+    /**
+     * Коэффициенты потребления
+     */
+    coofPotreb: {
+        d41: 1,
+        d42: 1,
+        d43: 1,
+        d44: 1,
+        d45: 1,
+        d46: 1,
+        d47: 1,
+        d48: 1,
+        d49: 1
+    },
+
+    //var k4 = 1;
+    F4: C6,
+
+    /* Удельная скорость потребления */
+    U46: function () {
+        var U46_ = (k4)/(1 + C4/this.F4);
+        return U46_;
+    },
+    U4: function () {
+        var U4_ = this.U46();
+        return U4_;
+    },
+
+    /* Скорость выделения */
+    r4: function () {
+        var r4_ = (this.coofPotreb.d41*this.U4())/(1 + this.coofPotreb.d42*this.U4()) + (1 - this.coofPotreb.d41/this.coofPotreb.d42);
+        return r4_;
+    },
+    L4: function () {
+        var L4_ = this.r4()*this.U4();
+        return L4_;
+    },
+
+    /* Скорость смертности */
+    V41: 1,
+    V42: 1,
+    S4: function () {
+        var S4_ = this.V41 + this.V42*(C4/this.U4());
+        return S4_;
+    },
+
+    /* Скорость выедания */
+    Ct4: rationC2.U24() + rationC1.U14(C1) // Выеданиея фитопланетона зоопланктоном и рыбой
+
+};
+
+    console.log("------------------------------------");
+    console.log("F4: "+rationC4.F4);
+    console.log("U46: "+rationC4.U46());
+    console.log("U4: "+rationC4.U4());
+    console.log("L4: "+rationC4.L4());
+    console.log("S4: "+rationC4.S4());
+    console.log("Ct4: "+rationC4.Ct4);
+
+    /**
+     *  Конец i=4: Для фитопланктона C4. (PH) - фитопланктон;
+     */
+
+    /* ------------------------------------------------------------------ */
 
 
 
