@@ -7,15 +7,15 @@ $(document).ready(function () {
      * Переменные гидробионтов
      * Ci (i=1-8) - относится к водной среде
      */
-    var C1 = 863550; //Number($('#FH').val());     // (FH) - рыбы;
-    var C2 = 1.8273; //Number($('#ZO').val());     // (ZO) - зоопланктон; мг/м3  1827.3 мг/л
-    var C3 = 14940; //Number($('#MF').val());     // (MF) - макрофиты;   фитомассой 14 940 - 17 430 т.
-    var C4 = 1.3; //Number($('#PH').val());     // (PH) - фитопланктон; 0,3 млн/л  3.1. Фитопланктон. Содержание Хл а фитопланктона в водотоках бассейна оз. Телецкое изменялось от 0,10 до 5,20 мг/м3 и в среднем составило 1,27±0,12 мг/м3. Минимальное содержание Хл а (от 0,10 до 1,75 мг/м3) отмечено в реках
-    var C5 = 5; //Number($('#BA').val());     // (BA) - бактерии;
-    var C6 = 6; //Number($('#MP').val());     // (MP) - минеральный фосфор;
-    var C7 = 7; //Number($('#DO').val());     // (DO) - растворимый органический фосфор;
-    var C8 = 50; //Number($('#DE').val());     // (DE) - детритный фосфор; 20-50 м2/м3
-    var C9 = 9; //Number($('#IP').val());     // (IP) - интерстициальный фосфор;
+    var C1 = 1; //863550; //Number($('#FH').val());     // (FH) - рыбы;
+    var C2 = 1; //1.8273; //Number($('#ZO').val());     // (ZO) - зоопланктон; мг/м3  1827.3 мг/л
+    var C3 = 1; //14940; //Number($('#MF').val());     // (MF) - макрофиты;   фитомассой 14 940 - 17 430 т.
+    var C4 = 1; //1.3; //Number($('#PH').val());     // (PH) - фитопланктон; 0,3 млн/л  3.1. Фитопланктон. Содержание Хл а фитопланктона в водотоках бассейна оз. Телецкое изменялось от 0,10 до 5,20 мг/м3 и в среднем составило 1,27±0,12 мг/м3. Минимальное содержание Хл а (от 0,10 до 1,75 мг/м3) отмечено в реках
+    var C5 = 1; //5; //Number($('#BA').val());     // (BA) - бактерии;
+    var C6 = 1; //6; //Number($('#MP').val());     // (MP) - минеральный фосфор;
+    var C7 = 1; //7; //Number($('#DO').val());     // (DO) - растворимый органический фосфор;
+    var C8 = 1; //50; //Number($('#DE').val());     // (DE) - детритный фосфор; 20-50 м2/м3
+    var C9 = 1; //9; //Number($('#IP').val());     // (IP) - интерстициальный фосфор;
 
     console.log(C1,C2,C3,C4,C5,C6,C7,C8,C9);
     console.log("------------------------------------");
@@ -213,7 +213,7 @@ var rationC1 = {
         return U14_;
     },
     U18: function (c1) {
-        var U18_ = (k1*this.coofPotreb.d18*C4)/(this.F1() + c1);
+        var U18_ = (k1*this.coofPotreb.d18*C8)/(this.F1() + c1);
         return U18_;
     },
 
@@ -254,6 +254,19 @@ var rationC1 = {
     };
 
 
+    console.log("------------------------------------");
+    console.log("F1: "+rationC1.F1());
+    console.log("k1: "+k1);
+    console.log("U12: "+rationC1.U12(C1));
+    console.log("U13: "+rationC1.U13(C1));
+    console.log("U14: "+rationC1.U14(C1));
+    console.log("U18: "+rationC1.U18(C1));
+    console.log("U1: "+rationC1.U1(C1));
+    console.log("r1: "+rationC1.r1(C1));
+    console.log("L1: "+rationC1.L1(C1));
+    console.log("S1: "+rationC1.S1(C1));
+    console.log("R1: "+rationC1.R1(C1));
+
     /* ------------------------------------------------------------------ */
 
 
@@ -285,37 +298,37 @@ var rationC2 = {
         return F2_;
     },
     /* Удельная скорость потребления */
-    U24: function () {
-        var U24_ = (k2*this.coofPotreb.d24*C4)/(this.F2() + C2);
+    U24: function (c2) {
+        var U24_ = (k2*this.coofPotreb.d24*C4)/(this.F2() + c2);
         return U24_;
     },
-    U25: function () {
-        var U25_ = (k2*this.coofPotreb.d25*C5)/(this.F2() + C2);
+    U25: function (c2) {
+        var U25_ = (k2*this.coofPotreb.d25*C5)/(this.F2() + c2);
         return U25_;
     },
-    U28: function () {
-        var U28_ = (k2*this.coofPotreb.d28*C8)/(this.F2() + C2);
+    U28: function (c2) {
+        var U28_ = (k2*this.coofPotreb.d28*C8)/(this.F2() + c2);
         return U28_;
     },
-    U2: function () {
-        var U2_ = this.U24() + this.U25() + this.U28();
+    U2: function (c2) {
+        var U2_ = this.U24(c2) + this.U25(c2) + this.U28(c2);
         return U2_;
     },
 
     /* Скорость выделения */
-    r2: function () {
-        var r2_ = (this.coofPotreb.d21*this.U2())/(1 + this.coofPotreb.d22*this.U2()) + (1 - this.coofPotreb.d21/this.coofPotreb.d22);
+    r2: function (c2) {
+        var r2_ = (this.coofPotreb.d21*this.U2(c2))/(1 + this.coofPotreb.d22*this.U2(c2)) + (1 - this.coofPotreb.d21/this.coofPotreb.d22);
         return r2_;
     },
-    L2: function () {
-        var L2_ = this.r2()*this.U2();
+    L2: function (c2) {
+        var L2_ = this.r2(c2)*this.U2(c2);
         return L2_;
     },
     /* Скорость смертности */
     V21: 1,
     V22: 1,
-    S2: function () {
-        var S2_ = this.V21 + this.V22*(C2/this.U2());
+    S2: function (c2) {
+        var S2_ = this.V21 + this.V22*(c2/this.U2(c2));
         return S2_;
     },
     /* Скорость выедания */
@@ -324,13 +337,13 @@ var rationC2 = {
 };
 
     console.log("------------------------------------");
-    console.log("F2: "+rationC2.F2());
-    console.log("U24: "+rationC2.U24());
-    console.log("U25: "+rationC2.U25());
-    console.log("U28: "+rationC2.U28());
-    console.log("U2: "+rationC2.U2());
-    console.log("L2: "+rationC2.L2());
-    console.log("S2: "+rationC2.S2());
+    console.log("F2: "+rationC2.F2(C2));
+    console.log("U24: "+rationC2.U24(C2));
+    console.log("U25: "+rationC2.U25(C2));
+    console.log("U28: "+rationC2.U28(C2));
+    console.log("U2: "+rationC2.U2(C2));
+    console.log("L2: "+rationC2.L2(C2));
+    console.log("S2: "+rationC2.S2(C2));
     console.log("Ct2: "+rationC2.Ct2);
 
     /**
@@ -449,36 +462,41 @@ var rationC4 = {
     F4: C6,
 
     /* Удельная скорость потребления */
-    U46: function () {
-        var U46_ = (k4)/(1 + C4/this.F4);
+    U46: function (c4) {
+        var U46_ = (k4)/(1 + c4/this.F4);
         return U46_;
     },
-    U4: function () {
-        var U4_ = this.U46();
+    U4: function (c4) {
+        var U4_ = this.U46(c4);
         return U4_;
     },
 
     /* Скорость выделения */
-    r4: function () {
-        var r4_ = (this.coofPotreb.d41*this.U4())/(1 + this.coofPotreb.d42*this.U4()) + (1 - this.coofPotreb.d41/this.coofPotreb.d42);
+    r4: function (c4) {
+        var r4_ = (this.coofPotreb.d41*this.U4(c4))/(1 + this.coofPotreb.d42*this.U4(c4)) + (1 - this.coofPotreb.d41/this.coofPotreb.d42);
         return r4_;
     },
-    L4: function () {
-        var L4_ = this.r4()*this.U4();
+    L4: function (c4) {
+        var L4_ = this.r4(c4)*this.U4(c4);
         return L4_;
     },
 
     /* Скорость смертности */
     V41: 1,
     V42: 1,
-    S4: function () {
-        var S4_ = this.V41 + this.V42*(C4/this.U4());
+    S4: function (c4) {
+        var S4_ = this.V41 + this.V42*(c4/this.U4(c4));
         return S4_;
     },
 
     /* Скорость выедания */
-    Ct4: rationC2.U24() + rationC1.U14(C1) // Выеданиея фитопланетона зоопланктоном и рыбой
+    Ct4: rationC2.U24(C2) + rationC1.U14(C1), // Выеданиея фитопланетона зоопланктоном и рыбой
 
+    /* Скорость биохимической трансформации */
+    R4: function (c4) {
+        var R4_ = (this.U4(c4) - this.L4(c4) - this.S4(c4) - this.Ct4) * c4;
+        return R4_;
+    }
     /**
      *  Конец i=4: Для фитопланктона C4. (PH) - фитопланктон;
      */
@@ -487,11 +505,13 @@ var rationC4 = {
 
     console.log("------------------------------------");
     console.log("F4: "+rationC4.F4);
-    console.log("U46: "+rationC4.U46());
-    console.log("U4: "+rationC4.U4());
-    console.log("L4: "+rationC4.L4());
-    console.log("S4: "+rationC4.S4());
+    console.log("U46: "+rationC4.U46(C4));
+    console.log("U4: "+rationC4.U4(C4));
+    console.log("r4: "+rationC4.r4(C4));
+    console.log("L4: "+rationC4.L4(C4));
+    console.log("S4: "+rationC4.S4(C4));
     console.log("Ct4: "+rationC4.Ct4);
+    console.log("R4: "+rationC4.R4(C4));
 
 
     /* ------------------------------------------------------------------ */
@@ -673,20 +693,34 @@ var speedTansformC8 = {
     var X = []; // Массив Глубины
     var S = []; // Массив Площади
     var Fun;
+    var funRKM4;
 
  /******************************************************
   *****{ Уравнение для гидрохимических переменных }*****
   ******************************************************/
     function functionC1 (w,q_plus, q_minus, c, s) {
-        Fun = w*rationC1.R1(C1) + q_plus/1000000*C1 - q_minus/1000000*c + J*s + E*L;
+        Fun = w*rationC1.R1(c) + q_plus*C1 - q_minus*c + J*s + E*L;
         return Fun;
+    }
+    function functionC4 (w,q_plus, q_minus, c, s) {
+        Fun = w*rationC4.R4(c) + q_plus*C4 - q_minus*c + J*s + E*L;
+        return Fun;
+    }
+    function RKM4(c) {
+        funRKM4 = c;
+        return funRKM4;
     }
 /******************************************************
  ******************************************************
  ******************************************************/
 
+    var test = functionC4(1000, Q_plus[0], Q_minus[0], C1, 4.222);
+    var test2 = rationC1.R1(C1);
+    //console.log(test);
+    console.log(test2);
     var arrCiW =[]; // Массив значений полученных в результате уравнения для гидрохимических переменных
-    var CiW = 0;
+    var CiW = C4;
+    var step = 0.25;
 
     for (var i=1; i<(xfinal/h); i++) {
         Idex.push(i); // Помещается в массив 364х4
@@ -709,17 +743,29 @@ var speedTansformC8 = {
          * РКМ4  function functionC1 (w,q_plus, q_minus, c, s)
          */
 
-        var kk1 = functionC1 (Y            , Q_plus[n], Q_minus[n], C1            , S[i]);
-        var kk2 = functionC1 (Y + 0.5*kk1*h, Q_plus[n], Q_minus[n], C1 + 0.5*kk1*h, S[i]);
-        var kk3 = functionC1 (Y + 0.5*kk2*h, Q_plus[n], Q_minus[n], C1 + 0.5*kk2*h, S[i]);
-        var kk4 = functionC1 (Y +     kk3*h, Q_plus[n], Q_minus[n], C1 +     kk3*h, S[i]);
-        CiW = CiW + h/6*(kk1 + 2*kk2 + 2*kk3 + kk4);
-        arrCiW.push(CiW/1000000); // Поместим y в массив
+        var kk1 = RKM4 (CiW               );
+        var kk2 = RKM4 (CiW + 0.5*kk1*step);
+        var kk3 = RKM4 (CiW + 0.5*kk2*step);
+        var kk4 = RKM4 (CiW +     kk3*step);
+        console.log(kk1);
+        console.log(kk2);
+        console.log(kk3);
+        console.log(kk4);
+
+        console.log(Y);
+        console.log(CiW);
+        var funCiW = functionC4(Y, Q_plus[n], Q_minus[n], CiW, s);
+        console.log(funCiW);
+        CiW = CiW + step/6*(kk1 + 2*kk2 + 2*kk3 + kk4);
+        console.log(CiW);
+        arrCiW.push(funCiW/1000000); // Поместим y в массив
+        step++;
           /**
          * РКМ4 end
          */
     }
 
+    console.log(arrCiW);
     /***--------------------------------------------------------------------------------***/
 
     /******************************************************
