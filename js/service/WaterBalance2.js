@@ -10,9 +10,9 @@ $(document).ready(function () {
     var C1 = 1; //863550; //Number($('#FH').val());     // (FH) - рыбы;
     var C2 = 1; //1.8273; //Number($('#ZO').val());     // (ZO) - зоопланктон; мг/м3  1827.3 мг/л
     var C3 = 1; //14940; //Number($('#MF').val());     // (MF) - макрофиты;   фитомассой 14 940 - 17 430 т.
-    var C4 = 1; //1.3; //Number($('#PH').val());     // (PH) - фитопланктон; 0,3 млн/л  3.1. Фитопланктон. Содержание Хл а фитопланктона в водотоках бассейна оз. Телецкое изменялось от 0,10 до 5,20 мг/м3 и в среднем составило 1,27±0,12 мг/м3. Минимальное содержание Хл а (от 0,10 до 1,75 мг/м3) отмечено в реках
+    var C4 = 0.02; //1.3; //Number($('#PH').val());     // (PH) - фитопланктон; 0,3 млн/л  3.1. Фитопланктон. Содержание Хл а фитопланктона в водотоках бассейна оз. Телецкое изменялось от 0,10 до 5,20 мг/м3 и в среднем составило 1,27±0,12 мг/м3. Минимальное содержание Хл а (от 0,10 до 1,75 мг/м3) отмечено в реках
     var C5 = 1; //5; //Number($('#BA').val());     // (BA) - бактерии;
-    var C6 = 1; //6; //Number($('#MP').val());     // (MP) - минеральный фосфор;
+    var C6 = 0.036; //6; //Number($('#MP').val());     // (MP) - минеральный фосфор;
     var C7 = 1; //7; //Number($('#DO').val());     // (DO) - растворимый органический фосфор;
     var C8 = 1; //50; //Number($('#DE').val());     // (DE) - детритный фосфор; 20-50 м2/м3
     var C9 = 1; //9; //Number($('#IP').val());     // (IP) - интерстициальный фосфор;
@@ -40,11 +40,11 @@ $(document).ready(function () {
     var E = 0.00001; // Боковая нагрузка
     var L = 1; // Длина водохранилища
 
-    var T = 2;
+    var T = 16;
     var K1o = 1;
     var K2o = 1;
     var K3o = 1;
-    var K4o = 1;
+    var K4o = 0.001;
     var K5o = 1;
     var K6o = 1;
     var K7o = 1;
@@ -84,6 +84,7 @@ $(document).ready(function () {
     var A43 = 1;
 
     var Rt4 = A40 + (A41 * Math.exp(A42*T) - 1)/(1 + A43 * Math.exp(A42*T));
+    console.log("Rt4: "+Rt4);
 
     // Для i = 5;
     var A50 = 1;
@@ -122,13 +123,14 @@ $(document).ready(function () {
 
     var t = 1;
     var tp = 0.5;
-    var f = 1;
+    var f = 24;
 
     var I04 = 350; // кал/(см2*сутки) - для i = 4
     var I03 = 250; // кал/(см2*сутки) - для i = 3 - свое значение!
 
     var Ia = 1;
     var I = Ia * (1 + Math.cos((2*Math.PI * (t - tp)/f)));
+    console.log("I: "+I);
 
 
     /* rei = I/I0i; */
@@ -147,8 +149,9 @@ $(document).ready(function () {
     var rx4 = re4*(Math.exp(-Ke4*h04));
 
 
-    var Rl3 = (Math.exp(1))/(Ke3*h03)+(Math.exp(-rx3)-Math.exp(-re3));
-    var Rl4 = (Math.exp(1))/(Ke4*h04)+(Math.exp(-rx4)-Math.exp(-re4));
+    var Rl3 = ((Math.exp(1))/(Ke3*h03))*(Math.exp(-rx3)-Math.exp(-re3));
+    var Rl4 = ((Math.exp(1))/(Ke4*h04))*(Math.exp(-rx4)-Math.exp(-re4));
+    console.log("Rl4: "+Rl4);
 
 
 
@@ -158,6 +161,7 @@ $(document).ready(function () {
     var k2 = K2o*Rt2*Rl2;
     var k3 = K3o*Rt3*Rl3;
     var k4 = K4o*Rt4*Rl4;
+    console.log("k4: "+k4);
     var k5 = K5o*Rt5*Rl5;
     var k8 = K8o*Rt8*Rl8;
 
@@ -447,9 +451,9 @@ var rationC4 = {
      * Коэффициенты потребления
      */
     coofPotreb: {
-        d41: 1,
-        d42: 1,
-        d43: 1,
+        d41: 2.856 * 0.00000001,
+        d42: 0.972 * 0.001,
+        d43: 5.404 * 0.0001,
         d44: 1,
         d45: 1,
         d46: 1,
@@ -482,8 +486,8 @@ var rationC4 = {
     },
 
     /* Скорость смертности */
-    V41: 1,
-    V42: 1,
+    V41: 0.0,
+    V42: 0.24,
     S4: function (c4) {
         var S4_ = this.V41 + this.V42*(c4/this.U4(c4));
         return S4_;
